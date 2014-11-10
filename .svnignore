@@ -5,6 +5,7 @@
 .jshintignore
 .travis.yml
 readme.md
+phpunit.xml
 phpunit.xml.dist
 tests
 tools

@@ -5,7 +5,8 @@ if [ $# -eq 0 ]; then
 	exit 1
 fi
 
-JETPACK_GIT_DIR=$(dirname "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" )
+# JETPACK_GIT_DIR=$(dirname "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" )
+JETPACK_GIT_DIR=$(pwd)
 JETPACK_SVN_DIR="/tmp/run-route"
 TAG=$1
 
@@ -31,17 +32,17 @@ git checkout $TAG
 rm -rf $JETPACK_SVN_DIR
 
 echo "Checking out SVN shallowly to $JETPACK_SVN_DIR"
-svn -q checkout http://plugins.svn.wordpress.org/run-route/ --depth=empty $JETPACK_SVN_DIR
+svn checkout http://plugins.svn.wordpress.org/run-route/ --depth=empty $JETPACK_SVN_DIR
 echo "Done!"
 
 cd $JETPACK_SVN_DIR
 
 echo "Checking out SVN trunk to $JETPACK_SVN_DIR/trunk"
-svn -q up trunk
+svn up trunk
 echo "Done!"
 
 echo "Checking out SVN tags shallowly to $JETPACK_SVN_DIR/tags"
-svn -q up tags --depth=empty
+svn up tags --depth=empty
 echo "Done!"
 
 echo "Deleting everything in trunk except for .svn directories"
@@ -51,7 +52,8 @@ done
 echo "Done!"
 
 echo "Rsync'ing everything over from Git except for .git stuffs"
-rsync -r --exclude='*.git*' $JETPACK_GIT_DIR/* $JETPACK_SVN_DIR/trunk
+# rsync -r --exclude='*.git*' $JETPACK_GIT_DIR/* $JETPACK_SVN_DIR/trunk
+cp -r $JETPACK_GIT_DIR/* $JETPACK_SVN_DIR/trunk
 echo "Done!"
 
 echo "Purging paths included in .svnignore"
@@ -65,9 +67,9 @@ echo "Done!"
 svn cp trunk tags/$TAG
 
 # Change stable tag in the tag itself, and commit (tags shouldn't be modified after comitted)
-perl -pi -e "s/Stable tag: .*/Stable tag: $TAG/" tags/$TAG/readme.txt
-svn ci
+# perl -pi -e "s/Stable tag: .*/Stable tag: $TAG/" tags/$TAG/readme.txt
+svn ci -m "Release $TAG"
 
 # Update trunk to point to the freshly tagged and shipped release.
-perl -pi -e "s/Stable tag: .*/Stable tag: $TAG/" trunk/readme.txt
-svn ci
+# perl -pi -e "s/Stable tag: .*/Stable tag: $TAG/" trunk/readme.txt
+svn ci -m "Release $TAG"
