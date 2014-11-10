@@ -1,52 +1,35 @@
 <?php
-
 /**
- * Set up environment for my plugin's tests suite.
- */
-
-/**
- * The path to the WordPress tests checkout.
- */
-// tested with tags 3.7, 3.8, 3.9, 4.0 and trunk
-// NB: need to enable php_mysql.dll in php.ini for 3.7 and 3.8
-define( 'WP_TESTS_DIR', '../wordpress-develop/tags/4.0/tests/phpunit/' );
-
-/**
- * The path to the main file of the plugin to test.
- */
-define( 'TEST_PLUGIN_FILE', '../run-route/trunk/run-route.php' );
-
-
-
-/**
- * The WordPress tests functions.
+ * Bootstrap the plugin unit testing environment.
  *
- * We are loading this so that we can add our tests filter
- * to load the plugin, using tests_add_filter().
- */
-require_once WP_TESTS_DIR . 'includes/functions.php';
-
-/**
- * Manually load the plugin main file.
+ * Edit 'active_plugins' setting below to point to your main plugin file.
  *
- * The plugin won't be activated within the test WP environment,
- * that's why we need to load it manually.
- *
- * You will also need to perform any installation necessary after
- * loading your plugin, since it won't be installed.
+ * @package wordpress-plugin-tests
  */
-function _manually_load_plugin() {
 
-    require TEST_PLUGIN_FILE;
-
-    // Make sure plugin is installed here ...
+// Support for:
+// 1. `WP_DEVELOP_DIR` environment variable
+// 2. Plugin installed inside of WordPress.org developer checkout
+// 3. Tests checked out to /tmp
+if( false !== getenv( 'WP_DEVELOP_DIR' ) ) {
+	$test_root = getenv( 'WP_DEVELOP_DIR' );
+} else if ( file_exists( '../../../../tests/phpunit/includes/bootstrap.php' ) ) {
+	$test_root = '../../../../tests/phpunit';
+} else if ( file_exists( '/tmp/wordpress-tests-lib/includes/bootstrap.php' ) ) {
+	$test_root = '/tmp/wordpress-tests-lib';
 }
-tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
-/**
- * Sets up the WordPress test environment.
- *
- * We've got our action set up, so we can load this now,
- * and viola, the tests begin.
- */
-require WP_TESTS_DIR . 'includes/bootstrap.php';
+require $test_root . '/includes/functions.php';
+
+// Activates this plugin in WordPress so it can be tested.
+function _manually_load_plugin() {
+	require dirname( __FILE__ ) . '/../jetpack.php';
+}
+tests_add_filter( 'plugins_loaded', '_manually_load_plugin' );
+
+require $test_root . '/includes/bootstrap.php';
+
+// Load the shortcodes module to test properly.
+if ( ! function_exists( 'shortcode_new_to_old_params' ) ) {
+	require dirname( __FILE__ ) . '/../modules/shortcodes.php';
+}
