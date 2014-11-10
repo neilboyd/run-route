@@ -62,12 +62,12 @@ done
 echo "Done!"
 
 # Tag the release.
-# svn cp trunk tags/$TAG
+svn cp trunk tags/$TAG
 
 # Change stable tag in the tag itself, and commit (tags shouldn't be modified after comitted)
-# perl -pi -e "s/Stable tag: .*/Stable tag: $TAG/" tags/$TAG/readme.txt
-# svn ci
+perl -pi -e "s/Stable tag: .*/Stable tag: $TAG/" tags/$TAG/readme.txt
+svn ci
 
 # Update trunk to point to the freshly tagged and shipped release.
-# perl -pi -e "s/Stable tag: .*/Stable tag: $TAG/" trunk/readme.txt
-# svn ci
+perl -pi -e "s/Stable tag: .*/Stable tag: $TAG/" trunk/readme.txt
+svn ci
