@@ -6,7 +6,7 @@ if [ $# -eq 0 ]; then
 fi
 
 JETPACK_GIT_DIR=$(dirname "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" )
-JETPACK_SVN_DIR="/tmp/jetpack"
+JETPACK_SVN_DIR="/tmp/run-route"
 TAG=$1
 
 cd $JETPACK_GIT_DIR
@@ -31,7 +31,7 @@ git checkout $TAG
 rm -rf $JETPACK_SVN_DIR
 
 echo "Checking out SVN shallowly to $JETPACK_SVN_DIR"
-svn -q checkout http://plugins.svn.wordpress.org/jetpack/ --depth=empty $JETPACK_SVN_DIR
+svn -q checkout http://plugins.svn.wordpress.org/run-route/ --depth=empty $JETPACK_SVN_DIR
 echo "Done!"
 
 cd $JETPACK_SVN_DIR

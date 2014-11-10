@@ -1,10 +1,6 @@
 <?php
 /**
  * Bootstrap the plugin unit testing environment.
- *
- * Edit 'active_plugins' setting below to point to your main plugin file.
- *
- * @package wordpress-plugin-tests
  */
 
 // Support for:
@@ -23,13 +19,8 @@ require $test_root . '/includes/functions.php';
 
 // Activates this plugin in WordPress so it can be tested.
 function _manually_load_plugin() {
-	require dirname( __FILE__ ) . '/../jetpack.php';
+	require dirname( __FILE__ ) . '/../run-route.php';
 }
 tests_add_filter( 'plugins_loaded', '_manually_load_plugin' );
 
 require $test_root . '/includes/bootstrap.php';
-
-// Load the shortcodes module to test properly.
-if ( ! function_exists( 'shortcode_new_to_old_params' ) ) {
-	require dirname( __FILE__ ) . '/../modules/shortcodes.php';
-}
