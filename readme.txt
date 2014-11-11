@@ -11,6 +11,9 @@ Adds a shortcode to display links to routes in Endomondo and RunKeeper
 
 == Changelog ==
 
+= 1.1 - 10 Nov 2014 =
+* Tested down to WordPress 3.7
+
 = 1.0 - 04 Nov 2014 =
 * Initial version
 

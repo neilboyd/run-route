@@ -5,12 +5,10 @@ if [ $# -eq 0 ]; then
 	exit 1
 fi
 
-# JETPACK_GIT_DIR=$(dirname "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" )
-JETPACK_GIT_DIR=$(pwd)
-JETPACK_SVN_DIR="/tmp/run-route"
+# GIT_DIR=$(dirname "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" )
+GIT_DIR=$(pwd)
+SVN_DIR="/tmp/run-route"
 TAG=$1
-
-cd $JETPACK_GIT_DIR
 
 # Make sure we're trying to deploy something that's been tagged. Don't deploy non-tagged.
 if [ -z $( git tag | grep "^$TAG$" ) ]; then
@@ -29,47 +27,43 @@ fi
 git checkout $TAG
 
 # Prep a home to drop our new files in. Just make it in /tmp so we can start fresh each time.
-rm -rf $JETPACK_SVN_DIR
+rm -rf $SVN_DIR
 
-echo "Checking out SVN shallowly to $JETPACK_SVN_DIR"
-svn checkout http://plugins.svn.wordpress.org/run-route/ --depth=empty $JETPACK_SVN_DIR
+echo "Checking out SVN shallowly to $SVN_DIR"
+svn checkout http://plugins.svn.wordpress.org/run-route/ --depth=empty $SVN_DIR
 echo "Done!"
 
-cd $JETPACK_SVN_DIR
+cd $SVN_DIR
 
-echo "Checking out SVN trunk to $JETPACK_SVN_DIR/trunk"
+echo "Checking out SVN trunk to $SVN_DIR/trunk"
 svn up trunk
 echo "Done!"
 
-echo "Checking out SVN tags shallowly to $JETPACK_SVN_DIR/tags"
+echo "Checking out SVN tags shallowly to $SVN_DIR/tags"
 svn up tags --depth=empty
 echo "Done!"
 
 echo "Deleting everything in trunk except for .svn directories"
-for file in $(find $JETPACK_SVN_DIR/trunk/* -not -path "*.svn*"); do
+for file in $(find $SVN_DIR/trunk/* -not -path "*.svn*"); do
 	rm $file 2>/dev/null
 done
 echo "Done!"
 
 echo "Rsync'ing everything over from Git except for .git stuffs"
-# rsync -r --exclude='*.git*' $JETPACK_GIT_DIR/* $JETPACK_SVN_DIR/trunk
-cp -r $JETPACK_GIT_DIR/* $JETPACK_SVN_DIR/trunk
+# rsync -r --exclude='*.git*' $GIT_DIR/* $SVN_DIR/trunk
+cp -r $GIT_DIR/* $SVN_DIR/trunk
 echo "Done!"
 
 echo "Purging paths included in .svnignore"
 # check .svnignore
-for file in $( cat "$JETPACK_GIT_DIR/.svnignore" 2>/dev/null ); do
-	rm -rf $JETPACK_SVN_DIR/trunk/$file
+for file in $( cat "$GIT_DIR/.svnignore" 2>/dev/null ); do
+	rm -rf $SVN_DIR/trunk/$file
 done
 echo "Done!"
 
 # Tag the release.
 svn cp trunk tags/$TAG
 
-# Change stable tag in the tag itself, and commit (tags shouldn't be modified after comitted)
-# perl -pi -e "s/Stable tag: .*/Stable tag: $TAG/" tags/$TAG/readme.txt
-svn ci -m "Release $TAG"
-
-# Update trunk to point to the freshly tagged and shipped release.
-# perl -pi -e "s/Stable tag: .*/Stable tag: $TAG/" trunk/readme.txt
-svn ci -m "Release $TAG"
+# Commit to svn
+# svn ci -m "Release $TAG"
+echo Now go to $SVN_DIR and type svn ci -m \"Release $TAG\"
