@@ -49,19 +49,17 @@ for file in $(find $SVN_DIR/trunk/* -not -path "*.svn*"); do
 done
 echo "Done!"
 
-echo "Rsync'ing everything over from Git except for .git stuffs"
-# rsync -r --exclude='*.git*' $GIT_DIR/* $SVN_DIR/trunk
+echo "Copying everything over from Git"
 cp -r $GIT_DIR/* $SVN_DIR/trunk
 echo "Done!"
 
 echo "Purging paths included in .svnignore"
-# check .svnignore
 for file in $( cat "$GIT_DIR/.svnignore" 2>/dev/null ); do
 	rm -rf $SVN_DIR/trunk/$file
 done
 echo "Done!"
 
-# Tag the release.
+# Tag the release in svn
 svn cp trunk tags/$TAG
 
 # Commit to svn
