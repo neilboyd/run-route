@@ -20,7 +20,7 @@ Adds a shortcode to display links to routes in Endomondo and RunKeeper
 == Description ==
 Adds a shortcode to display links to routes in Endomondo and RunKeeper.
 
-[run_route endomondo='{endomondo route id}' rk_user='{RunKeeper user id}' rk_route='{RunKeeper route id}']
+`[run_route endomondo='{endomondo route id}' rk_user='{RunKeeper user id}' rk_route='{RunKeeper route id}']`
 
 All options are entered in the shortcode, so there is no admin page for this plugin.
 
@@ -36,3 +36,7 @@ No. You can specify one or both.
 = Can I see an example of this plugin in use? =
 
 Yes. I use it on my site [RunHaarlem.com](https://RunHaarlem.com)
+
+An example shortcode use is:
+
+`[run_route endomondo="428848167" rk_route="3505614" rk_user="runhaarlemcom"]`
